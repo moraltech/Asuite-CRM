@@ -22,3 +22,5 @@ This is a Next.js 14 (App Router) CRM application using pnpm, Tailwind CSS, Pris
 - The database is SQLite (`file:./dev.db` relative to `prisma/`). Run `npx prisma db push` to create/sync the DB schema.
 - UI components live in `src/components/ui/` and use the `cn` utility from `@/lib/utils` (clsx + tailwind-merge).
 - Custom `brand` color palette is defined in `tailwind.config.ts`.
+- `pnpm.onlyBuiltDependencies` in `package.json` allowlists Prisma/esbuild build scripts so `pnpm install` triggers `prisma generate` automatically. If this config is missing, you'll see "Ignored build scripts" warnings and must run `npx prisma generate` manually.
+- Dashboard routes (`/dashboard/*`) are protected by NextAuth middleware. You must register/login to access them. A test account can be created via `POST /api/register`.
