@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  plan         String   @default("professional")
+  billingCycle String   @default("monthly")
+  isActive     Boolean  @default(true)
+  address      String?
+  phone        String?
+  email        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  users     User[]
+  employees Employee[]
+  drivers   Driver[]
+  vehicles  Vehicle[]
+  loads     Load[]
+  payrolls  Payroll[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("ADMIN")
+  avatar    String?
+  isActive  Boolean  @default(true)
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Employee {
+  id         String   @id @default(cuid())
+  firstName  String
+  lastName   String
+  email      String
+  phone      String?
+  position   String
+  department String
+  hireDate   DateTime
+  status     String   @default("active")
+  payType    String   @default("salary")
+  payRate    Float    @default(0)
+  address    String?
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Driver {
+  id             String   @id @default(cuid())
+  firstName      String
+  lastName       String
+  email          String
+  phone          String?
+  licenseNumber  String
+  licenseClass   String   @default("Class A CDL")
+  licenseExpiry  DateTime
+  status         String   @default("available")
+  rating         Float    @default(5.0)
+  totalTrips     Int      @default(0)
+  totalMiles     Float    @default(0)
+  hireDate       DateTime @default(now())
+  address        String?
+  emergencyName  String?
+  emergencyPhone String?
+  tenantId       String
+  tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  loads          Load[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Vehicle {
+  id              String    @id @default(cuid())
+  unitNumber      String
+  type            String
+  make            String
+  model           String
+  year            Int
+  vin             String?
+  licensePlate    String?
+  status          String    @default("available")
+  mileage         Float     @default(0)
+  fuelType        String    @default("diesel")
+  lastServiceDate DateTime?
+  nextServiceDate DateTime?
+  insuranceExpiry DateTime?
+  tenantId        String
+  tenant          Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  loads           Load[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Load {
+  id           String    @id @default(cuid())
+  loadNumber   String
+  status       String    @default("pending")
+  origin       String
+  originLat    Float?
+  originLng    Float?
+  destination  String
+  destLat      Float?
+  destLng      Float?
+  pickupDate   DateTime
+  deliveryDate DateTime?
+  rate         Float
+  distance     Float?
+  weight       Float?
+  commodity    String?
+  broker       String?
+  notes        String?
+  driverId     String?
+  driver       Driver?   @relation(fields: [driverId], references: [id], onDelete: SetNull)
+  vehicleId    String?
+  vehicle      Vehicle?  @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  tenantId     String
+  tenant       Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Payroll {
+  id           String   @id @default(cuid())
+  employeeName String
+  employeeId   String?
+  period       String
+  periodStart  DateTime
+  periodEnd    DateTime
+  basePay      Float
+  overtime     Float    @default(0)
+  bonuses      Float    @default(0)
+  deductions   Float    @default(0)
+  taxes        Float    @default(0)
+  netPay       Float
+  status       String   @default("pending")
+  paidDate     DateTime?
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
