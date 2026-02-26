@@ -2,25 +2,26 @@
 
 ## Cursor Cloud specific instructions
 
-This is a Next.js 14 (App Router) CRM application using pnpm, Tailwind CSS, Prisma (SQLite), and NextAuth.
+Asuite CRM is a multi-tenant trucking CRM SaaS platform built with Next.js 14 (App Router), Prisma + SQLite, NextAuth, Tailwind CSS, Recharts, and Leaflet.
 
-### Key commands
+### Quick Reference
 
-| Action | Command |
-|--------|---------|
-| Install deps | `pnpm install` |
-| Lint | `pnpm lint` |
-| Build | `pnpm build` |
-| Dev server | `pnpm dev` (port 3000) |
-| Prisma generate | `npx prisma generate` |
-| Prisma push schema | `npx prisma db push` |
+- **Dev server:** `pnpm dev` (port 3000)
+- **Build:** `pnpm build`
+- **Lint:** `pnpm lint`
+- **DB push:** `pnpm db:push` (syncs Prisma schema to SQLite)
+- **DB seed:** `pnpm db:seed` (populates demo data)
+- **Full DB reset:** `pnpm db:setup` (push + seed)
 
-### Non-obvious caveats
+### Demo Credentials
 
-- The `.eslintrc.json` uses `@typescript-eslint` rules; the `@typescript-eslint/eslint-plugin` and `@typescript-eslint/parser` packages must be installed as dev dependencies (added to `package.json`) and the plugin listed in `.eslintrc.json` for lint to pass.
-- After `pnpm install`, you must run `npx prisma generate` to generate the Prisma client before building or starting the dev server.
-- The database is SQLite (`file:./dev.db` relative to `prisma/`). Run `npx prisma db push` to create/sync the DB schema.
-- UI components live in `src/components/ui/` and use the `cn` utility from `@/lib/utils` (clsx + tailwind-merge).
-- Custom `brand` color palette is defined in `tailwind.config.ts`.
-- `pnpm.onlyBuiltDependencies` in `package.json` allowlists Prisma/esbuild build scripts so `pnpm install` triggers `prisma generate` automatically. If this config is missing, you'll see "Ignored build scripts" warnings and must run `npx prisma generate` manually.
-- Dashboard routes (`/dashboard/*`) are protected by NextAuth middleware. You must register/login to access them. A test account can be created via `POST /api/register`.
+- Email: `admin@asuite.com` / Password: `password123`
+- Tenant: "Swift Haul Logistics"
+
+### Caveats
+
+- The SQLite database file lives at `prisma/dev.db`. If schema changes are made, run `pnpm db:push` then `pnpm db:seed` to re-populate.
+- Prisma 5 is pinned (not v7) because v7 removed the `url` property from schema datasource blocks and requires a different config approach.
+- The `pnpm.onlyBuiltDependencies` array in `package.json` must include `@prisma/client`, `@prisma/engines`, `prisma`, `esbuild`, and `unrs-resolver` to allow build scripts.
+- The Fleet Tracking page uses `react-leaflet@4` (not v5) for React 18 compatibility. The map component uses `dynamic(() => import(...), { ssr: false })` since Leaflet requires the browser DOM.
+- NextAuth uses JWT strategy with CredentialsProvider. The `NEXTAUTH_SECRET` and `NEXTAUTH_URL` are in `.env`.
