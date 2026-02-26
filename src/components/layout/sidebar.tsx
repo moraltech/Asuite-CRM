@@ -14,7 +14,6 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  ChevronDown,
 } from "lucide-react";
 
 const navigation = [

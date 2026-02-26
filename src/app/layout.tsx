@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
+const inter = Inter({ subsets: ["latin"] });
+
 export const metadata: Metadata = {
-  title: "Asuite CRM",
-  description: "Asuite CRM Application",
+  title: "Asuite CRM - Modern Trucking Management Platform",
+  description:
+    "Multi-tenant CRM platform built for trucking companies. Manage HR, payroll, dispatch, drivers, fleet tracking, and analytics all in one place.",
 };
 
 export default function RootLayout({
@@ -13,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }

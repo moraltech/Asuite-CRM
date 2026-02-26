@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Building2, CreditCard, Shield, Users, Bell, Palette } from "lucide-react";
+import { Building2, CreditCard, Shield, Bell, Palette } from "lucide-react";
 
 const roles = [
   { name: "Admin", description: "Full system access", color: "bg-red-100 text-red-800" },
